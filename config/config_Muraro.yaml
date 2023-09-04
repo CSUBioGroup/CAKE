@@ -1,0 +1,30 @@
+seed: 42
+workers: 20
+
+K: 4096
+max_element: 95536
+m: 0.999
+n: 6
+c: 1
+T: 0.3
+p: 0.2
+lam: 0.4
+alpha: 0.1
+kd_alpha: 0.05
+kd_temperature: 3
+learning_rate: 0.0003
+num_genes: 2000
+latent_feature: [1024, 512, 128]
+
+epochs: 30
+classnum: 9
+start_epoch: 1
+batch_size: 128
+resolution: 0.3
+
+reload: False
+flag: aug_nn
+model_path: states/Muraro
+data_type: h5_nested
+dataset_name: Muraro
+root_dir: datasets
