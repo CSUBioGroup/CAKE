@@ -27,4 +27,4 @@ flag: aug_nn
 model_path: states/Shekhar
 dataset_name: Shekhar
 data_type: npz
-root_dir: datasets
+root_dir: data
