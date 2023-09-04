@@ -27,4 +27,4 @@ flag: aug_nn
 model_path: states/Plasschaert
 dataset_name: Plasschaert
 data_type: h5_nested
-root_dir: datasets
+root_dir: data
