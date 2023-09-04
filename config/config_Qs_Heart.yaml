@@ -27,4 +27,4 @@ flag: aug_nn
 model_path: states/Quake_Smart_seq2_Heart
 dataset_name: Quake_Smart_seq2_Heart
 data_type: h5_nested
-root_dir: datasets
+root_dir: data
