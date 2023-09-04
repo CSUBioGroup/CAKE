@@ -27,4 +27,4 @@ flag: aug_nn
 model_path: states/Muraro
 data_type: h5_nested
 dataset_name: Muraro
-root_dir: datasets
+root_dir: data
