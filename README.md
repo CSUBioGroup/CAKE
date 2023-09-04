@@ -23,7 +23,7 @@ pip install -r requirements.txt
 
 ## Datasets
 
-Some of data used in our experiments can be found in [`datasets`](https://github.com/CSUBioGroup/CAKE/datasets). 
+Some of data used in our experiments can be found in [`datasets`](https://github.com/CSUBioGroup/CAKE/tree/main/data). 
 
 ## Usage
 
