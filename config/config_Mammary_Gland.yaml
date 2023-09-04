@@ -27,4 +27,4 @@ flag: aug_nn
 model_path: states/Mammary_Gland
 data_type: h5
 dataset_name: Mammary_Gland
-root_dir: datasets
+root_dir: data
