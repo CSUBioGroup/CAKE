@@ -27,7 +27,7 @@ Some of data used in our experiments can be found in [`datasets`](https://github
 
 ## Usage
 
-We provide the scripts for running CAKE. And the hyperparameters can be found in [`config`](https://github.com/CSUBioGroup/CAKE/config).
+We provide the scripts for running CAKE. And the hyperparameters can be found in [`config`](https://github.com/CSUBioGroup/CAKE/tree/main/config).
 
 ```
 python train_KD.py
