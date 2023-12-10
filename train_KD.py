@@ -62,8 +62,6 @@ def train_teacher(train_loader, teacher, criterion, optimizer, device, epoch):
     #                          [batch_time, data_time, losses, top1],
     #                          prefix="Epoch: [{}]".format(epoch))
 
-
-  
     teacher = teacher.to(device)
     loss_epoch = 0.0
     count = 0
