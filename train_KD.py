@@ -377,7 +377,11 @@ def main(dname):
          dir_path_name="pictures")
 
     # save embeddings
-    write_path = f"data_embeddings/{dname}_{args.seed}.h5ad"
+    dir_path = "data_embeddings"
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+    write_path = os.path.join(dir_path, f"{dname}_{args.seed}.h5ad")
     adata_embedding.write_h5ad(write_path)
 
 
