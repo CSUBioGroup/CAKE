@@ -150,7 +150,7 @@ def get_prediction(model, device, val_loader):
 
 def main(dname):
     parser = argparse.ArgumentParser()
-    config = yaml_config_hook(f"config_test/config_{dname}.yaml")
+    config = yaml_config_hook(f"config/config_{dname}.yaml")
 
     for k, v in config.items():
         parser.add_argument(f"--{k}", default=v, type=type(v))
