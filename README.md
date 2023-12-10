@@ -1,10 +1,10 @@
 ## CAKE
 
-CAKE: clustering scRNA-seq data via combining contrastive learning with knowledge distillation
+CAKE: a flexible self-supervised framework for enhancing cell visualization, clustering, and rare cell identification
 
 ## Overview
 
-CAKE employs a two-stage self-supervised learning algorithm to learn cell representation and clustering labels. Firstly, CAKE utilizes a enhanced contrastive learning model inspired by the principles of MOCO, and seamlessly integrates a task-specific data augmentation strategy aimed at learning clustering-friendly cell representation. Subsequently, CAKE uses a preliminary clustering approach to derive pseudo clustering labels based on the learned cell representation. In the second-stage, CAKE introduces a self-knowledge distiller model, which is trained on high-density anchor cells from preliminary clusters, and finally assigns the soft and refined clustering labels to cells.
+Single cell sequencing technology has provided unprecedented opportunities for comprehensively deciphering cell heterogeneity. Nevertheless, the high dimensionality and intricate nature of cell heterogeneity have presented substantial challenges to computational methods. Numerous novel clustering methods have been proposed to address this issue. However, none of these methods achieve the consistently better performance under different biological scenario. In this study, we developed CAKE, a novel and scalable self-supervised clustering method, which consists of a contrastive learning model with a mixture neighborhood augmentation for cell representation learning, and a self-Knowledge Distiller model for refinement of clustering results. These designs provide more condensed and cluster-friendly cell representations and improve the clustering performance in term of accuracy and robustness. Furthermore, in addition to accurately identify the major type cells, CAKE could also find more biologically meaningful cell subgroups and rare cell types. The comprehensive experiments on real scRNA-seq datasets demonstrated the superiority of CAKE on visualization and clustering than other comparison methods and indicated its extensive application in the field of cell heterogeneity analysis.
 
 ## Installation
 
