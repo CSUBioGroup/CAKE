@@ -26,10 +26,10 @@ def train_distiller(train_loader, student, teacher, criterion, optimizer, device
     student = student.to(device)
     teacher = teacher.to(device)
     loss_epoch = 0.0
-    n = len(train_loader)
+    # n = len(train_loader)
     count = 0
 
-    for step, (x, pseu, _) in enumerate(train_loader):
+    for i, (x, pseu, _) in enumerate(train_loader):
         x = x.to(device)
         pseu = pseu.to(device)
         
@@ -45,22 +45,24 @@ def train_distiller(train_loader, student, teacher, criterion, optimizer, device
         loss.backward()
         optimizer.step()
         
-        if step % 50 == 0:
-            print(f"Step [{step}/{n}]\t loss_instance: {loss.item()}")
+        if i % 50 == 0:
+            # print(f"Step [{step}/{n}]\t loss_instance: {loss.item()}")
+            print(f"Step [{i}]\t loss_instance: {loss.item()}")
             loss_epoch += loss.item()
 
-        loss_epoch = loss_epoch / count
+    loss_epoch = loss_epoch / count
         
-        return loss_epoch
+    return loss_epoch
 
 def train_teacher(train_loader, teacher, criterion, optimizer, device, epoch):
-    batch_time = AverageMeter("Time", ":6.3f")
-    data_time = AverageMeter("Data", ":6.3f")
-    losses = AverageMeter("Loss", ":.4e")
-    top1 = AverageMeter("Acc@1", ":6.2f")
-    progress = ProgressMeter(len(train_loader),
-                             [batch_time, data_time, losses, top1],
-                             prefix="Epoch: [{}]".format(epoch))
+    # batch_time = AverageMeter("Time", ":6.3f")
+    # data_time = AverageMeter("Data", ":6.3f")
+    # losses = AverageMeter("Loss", ":.4e")
+    # top1 = AverageMeter("Acc@1", ":6.2f")
+    # progress = ProgressMeter(len(train_loader),
+    #                          [batch_time, data_time, losses, top1],
+    #                          prefix="Epoch: [{}]".format(epoch))
+
 
   
     teacher = teacher.to(device)
@@ -70,7 +72,7 @@ def train_teacher(train_loader, teacher, criterion, optimizer, device, epoch):
     teacher.eval()
     end = time.time()
     for i, (x, pseu, y) in enumerate(train_loader):
-        data_time.update(time.time() - end)
+        # data_time.update(time.time() - end)
         x = x.to(device)
         pseu = pseu.to(device)
 
@@ -79,20 +81,20 @@ def train_teacher(train_loader, teacher, criterion, optimizer, device, epoch):
         out = teacher(x)
         loss = criterion(out, pseu)
         
-        acc1 = accuracy(out, pseu, topk=(1, ))
-        losses.update(loss.item(), x.size(0))
-        top1.update(acc1[0].item(), x.size(0))
+        # acc1 = accuracy(out, pseu, topk=(1, ))
+        # losses.update(loss.item(), x.size(0))
+        # top1.update(acc1[0].item(), x.size(0))
 
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         
-        batch_time.update(time.time() - end)
-        end = time.time()
+        # batch_time.update(time.time() - end)
+        # end = time.time()
 
         if i % 50 == 0:
             print(f"Step [{i}]\t loss_instance: {loss.item()}")
-            progress.display(i)
+        #     progress.display(i)
 
         loss_epoch += loss.item()
 
@@ -151,7 +153,7 @@ def get_prediction(model, device, val_loader):
 
 def main(dname):
     parser = argparse.ArgumentParser()
-    config = yaml_config_hook(f"config/config_{dname}.yaml")
+    config = yaml_config_hook(f"config_test/config_{dname}.yaml")
 
     for k, v in config.items():
         parser.add_argument(f"--{k}", default=v, type=type(v))
@@ -170,15 +172,17 @@ def main(dname):
     device = torch.device(device)
     print(device)
     
+    # start_time1 = time.time()
     # 1. pretrain moco 
     print("---------- Step 1: Pretrain MoCo ----------")
-    model = pretrain(args, device=device)
+    model, start_time1 = pretrain(args, device=device)
 
     # 2. get pseudo label 
     print('---------- Step 2: Get Pseudo Labels ----------')
     adata_embedding, adata, Y, leiden_pred, _, val_loader = get_pseudo_label(args,
                                                                              model, 
                                                                              device=device)
+    end_time1 = time.time()
     plot(adata_embedding, 
          Y, 
          args.dataset_name, 
@@ -266,6 +270,7 @@ def main(dname):
                                     num_workers=args.workers)
     
     # 4. train teacher model
+    start_time2 = time.time()
     epochs = 100
     best_acc1 = 0.0
     for epoch in range(args.start_epoch, epochs+1):
@@ -277,14 +282,14 @@ def main(dname):
                                    epochs)
         
         # evaluate on validation set
-        acc1 = validate_teacher(val_teacher_loader, teacher, teacher_criterion, device)
+        # acc1 = validate_teacher(val_teacher_loader, teacher, teacher_criterion, device)
         # remember best acc@1 and save checkpoint
-        best_acc1 = max(acc1, best_acc1)
+        # best_acc1 = max(acc1, best_acc1)
         
         print(f"Epoch [{epoch}/{epochs}]\t Loss: {loss_epoch}")
         print('-' * 60)
         
-    print(f"Best Accuracy: {best_acc1}")
+    # print(f"Best Accuracy: {best_acc1}")
 
     # 4.2 evaluation tearcher model performance
     teacher_pred = get_prediction(teacher, device, val_loader)
@@ -310,7 +315,7 @@ def main(dname):
     for name, param in teacher.named_parameters():
         param.requires_grad = False
         
-    epochs = 100
+    epochs = 50
     for epoch in range(args.start_epoch, epochs+1):
         loss_epoch = train_distiller(train_loader, 
                                      student, 
@@ -321,6 +326,7 @@ def main(dname):
 
         print(f"Epoch [{epoch}/{epochs}]\t Loss: {loss_epoch}")
         print('-' * 60)
+    end_time2 = time.time()
 
     # 5.2 evalation student model
     student_pred = get_prediction(student, device, val_loader)
@@ -333,11 +339,12 @@ def main(dname):
 
     # save result 
     tb = pt.PrettyTable()
-    tb.field_names = ['Method Name', 'ARI', 'NMI']
-
-    tb.add_row(['Leiden', round(leiden_ari, 4), round(leiden_nmi, 4)])
-    tb.add_row(['Teacher', round(teacher_ari, 4), round(teacher_nmi, 4)])
-    tb.add_row(['Student', round(student_ari, 4), round(student_nmi, 4)])
+    tb.field_names = ['Method Name', 'ARI', 'NMI', 'time']
+    time1 = end_time1 - start_time1
+    time2 = end_time2 - start_time2
+    tb.add_row(['Leiden', round(leiden_ari, 4), round(leiden_nmi, 4), time1])
+    tb.add_row(['Teacher', round(teacher_ari, 4), round(teacher_nmi, 4), time2])
+    tb.add_row(['Student', round(student_ari, 4), round(student_nmi, 4), time1 + time2])
 
     print(tb)
 
@@ -378,5 +385,5 @@ def main(dname):
 
 
 if __name__ == "__main__":
-    dname = "Plasschaert"
+    dname = "Muraro"
     main(dname)
