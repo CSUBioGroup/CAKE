@@ -26,7 +26,6 @@ def train_distiller(train_loader, student, teacher, criterion, optimizer, device
     student = student.to(device)
     teacher = teacher.to(device)
     loss_epoch = 0.0
-    # n = len(train_loader)
     count = 0
 
     for i, (x, pseu, _) in enumerate(train_loader):
@@ -46,9 +45,9 @@ def train_distiller(train_loader, student, teacher, criterion, optimizer, device
         optimizer.step()
         
         if i % 50 == 0:
-            # print(f"Step [{step}/{n}]\t loss_instance: {loss.item()}")
             print(f"Step [{i}]\t loss_instance: {loss.item()}")
-            loss_epoch += loss.item()
+         
+        loss_epoch += loss.item()
 
     loss_epoch = loss_epoch / count
         
