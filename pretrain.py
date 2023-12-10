@@ -1,5 +1,6 @@
 import os
 import argparse
+import time
    
 from loaders import data_process
 from moco import Encoder, MoCo
@@ -111,6 +112,7 @@ def pretrain(args, device):
         args.start_epoch = checkpoint['epoch'] + 1
 
     # pretrain
+    t0 = time.time()
     for epoch in range(args.start_epoch, args.epochs+1):
         loss_epoch = pretrain_epoch(model, 
                                     data,
@@ -128,49 +130,6 @@ def pretrain(args, device):
         if epoch % 10 == 0:
             model.eval()
         
-        # save_model(model_path, model, optimizer, epoch)
     save_model(model_path, model, optimizer, args.epochs)
 
-    return model
- 
-def main():
-    parser = argparse.ArgumentParser()
-    # config = yaml_config_hook("config/config_Adam.yaml")
-    # config = yaml_config_hook("config/config_Bach.yaml")
-    config = yaml_config_hook("config/config_Baron_human.yaml")
-    # config = yaml_config_hook("config/config_Bone_Marrow.yaml")
-    # config = yaml_config_hook("config/config_Fat.yaml")
-    # config = yaml_config_hook("config/config_Guo.yaml")
-    # config = yaml_config_hook("config/config_HCF-spleen.yaml")
-    # config = yaml_config_hook("config/config_Hrvatin.yaml")
-    # config = yaml_config_hook("config/config_Macosko.yaml")
-    # config = yaml_config_hook("config/config_Mammary_Gland.yaml")
-    # config = yaml_config_hook("config/config_Muraro.yaml")
-    # config = yaml_config_hook("config/config_Plasschaert.yaml")
-    # config = yaml_config_hook("config/config_QS_Heart.yaml")
-    # config = yaml_config_hook("config/config_Qx_Spleen.yaml")
-    # config = yaml_config_hook("config/config_Qx_Trachea.yaml")
-    # config = yaml_config_hook("config/config_Shekhar.yaml")
-    # config = yaml_config_hook("config/config_Tosches_turtle.yaml")
-
-    for k, v in config.items():
-        parser.add_argument(f"--{k}", default=v, type=type(v))
-
-    args = parser.parse_args()
-
-    if not os.path.exists(args.model_path):
-        os.makedirs(args.model_path)
-    
-    print(f"Current Random seed {args.seed}")
-    print(f"Current Flag: {args.flag}")
-
-    set_seed(args.seed)
-
-    device = "cuda:1" if torch.cuda.is_available() else "cpu"
-    device = torch.device(device)
-    print(device)
-
-    model = pretrain(args, device=device)
-    
-if __name__ == "__main__":
-    main()
+    return model, t0
